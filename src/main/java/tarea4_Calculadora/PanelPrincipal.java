@@ -46,6 +46,10 @@ public class PanelPrincipal extends JPanel implements ActionListener {
         this.add(botonera, BorderLayout.SOUTH);
 
         for (JButton boton : this.botonera.getgrupoBotones()) {
+            //if que si no es un numero llame otro metodo
+            if (boton.getText().equals("+") || boton.getText().equals("-") || boton.getText().equals("*") || boton.getText().equals("/") || boton.getText().equals("=") || boton.getText().equals("C")) {
+                calcularResultado(boton);
+            }
             boton.addActionListener(this);
         }
 
@@ -60,8 +64,21 @@ public class PanelPrincipal extends JPanel implements ActionListener {
             System.out.println(((JButton) o).getText());
             areaTexto.setText(((JButton) o).getText());
         }
-        
-        
+    }
+
+    public void calcularResultado(JButton bo) {
+        for (JButton boton : this.botonera.getgrupoBotones()) {
+
+            if (boton.getText().equals("+")) {
+                bo.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent arg0) {
+                        areaTexto.setText("");
+                    }
+                });
+
+            }
+        }
     }
 
 }
