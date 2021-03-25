@@ -23,7 +23,9 @@ public class PanelPrincipal extends JPanel implements ActionListener {
     private PanelBotones botonera;
     private JTextArea areaTexto;
     private int tipoOperacion;
-
+    private String var1;
+    private String var2;
+    private String resultado;
     // Constructor
     public PanelPrincipal() {
         initComponents();
@@ -49,8 +51,10 @@ public class PanelPrincipal extends JPanel implements ActionListener {
             //if que si no es un numero llame otro metodo
             if (boton.getText().equals("+") || boton.getText().equals("-") || boton.getText().equals("*") || boton.getText().equals("/") || boton.getText().equals("=") || boton.getText().equals("C")) {
                 calcularResultado(boton);
+            } else {
+               boton.addActionListener(this); 
             }
-            boton.addActionListener(this);
+            
         }
 
     }
@@ -63,20 +67,27 @@ public class PanelPrincipal extends JPanel implements ActionListener {
         if (o instanceof JButton) {
             System.out.println(((JButton) o).getText());
             areaTexto.setText(((JButton) o).getText());
+            this.var1 = areaTexto.getText();  
         }
     }
 
     public void calcularResultado(JButton bo) {
         for (JButton boton : this.botonera.getgrupoBotones()) {
-
-            if (boton.getText().equals("+")) {
-                bo.addActionListener(new ActionListener() {
+            
+            switch (boton.getText()){
+                case "+":
+                    boton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent arg0) {
-                        areaTexto.setText("");
+                        String temporal = var1;
+                        var1 ="0";
+                        resultado = temporal +var1; 
+                        areaTexto.setText(resultado);     
                     }
                 });
-
+                    break;
+                case "-":
+                    break;
             }
         }
     }
