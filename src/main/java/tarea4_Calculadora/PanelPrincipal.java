@@ -23,9 +23,11 @@ public class PanelPrincipal extends JPanel implements ActionListener {
     private PanelBotones botonera;
     private JTextArea areaTexto;
     private int tipoOperacion;
-    private String var1;
-    private String var2;
-    private String resultado;
+    private String var1 = "";
+    private int entradaSwitch;
+    private double resultado = 0;
+    private String array[];
+
     // Constructor
     public PanelPrincipal() {
         initComponents();
@@ -48,13 +50,7 @@ public class PanelPrincipal extends JPanel implements ActionListener {
         this.add(botonera, BorderLayout.SOUTH);
 
         for (JButton boton : this.botonera.getgrupoBotones()) {
-            //if que si no es un numero llame otro metodo
-            if (boton.getText().equals("+") || boton.getText().equals("-") || boton.getText().equals("*") || boton.getText().equals("/") || boton.getText().equals("=") || boton.getText().equals("C")) {
-                calcularResultado(boton);
-            } else {
-               boton.addActionListener(this); 
-            }
-            
+            boton.addActionListener(this);
         }
 
     }
@@ -66,30 +62,127 @@ public class PanelPrincipal extends JPanel implements ActionListener {
         // Si es un botón
         if (o instanceof JButton) {
             System.out.println(((JButton) o).getText());
-            areaTexto.setText(((JButton) o).getText());
-            this.var1 = areaTexto.getText();  
-        }
-    }
 
-    public void calcularResultado(JButton bo) {
-        for (JButton boton : this.botonera.getgrupoBotones()) {
-            
-            switch (boton.getText()){
+            if (!((JButton) o).getText().equals("=")) {
+                areaTexto.setText(areaTexto.getText() + ((JButton) o).getText());
+            }
+            //switch para que al pulsar el boton de operacion se desabiliten los demas
+            switch (((JButton) o).getText()) {
                 case "+":
-                    boton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        String temporal = var1;
-                        var1 ="0";
-                        resultado = temporal +var1; 
-                        areaTexto.setText(resultado);     
+                    for (int i = 11; i <= 13; i++) {
+                        botonera.grupoBotones[i].setEnabled(false);
                     }
-                });
                     break;
                 case "-":
+                    botonera.grupoBotones[10].setEnabled(false);
+                    botonera.grupoBotones[12].setEnabled(false);
+                    botonera.grupoBotones[13].setEnabled(false);
                     break;
+                case "*":
+                    botonera.grupoBotones[10].setEnabled(false);
+                    botonera.grupoBotones[11].setEnabled(false);
+                    botonera.grupoBotones[13].setEnabled(false);
+                    break;
+                case "/":
+                    for (int i = 10; i <= 12; i++) {
+                        botonera.grupoBotones[i].setEnabled(false);
+                    }
+                    break;
+                case "C":
+                    for (int i = 10; i <= 13; i++) {
+                        botonera.grupoBotones[i].setEnabled(true);
+                    }
             }
+            calcularResultado(((JButton) o));
         }
     }
 
+    //metodo para calcular resultados
+    public void calcularResultado(JButton bo) {
+
+        //if para que filtran los botones para lueo dirigirlos a una estructura switch
+        if (bo.getText().equals("=")) {
+            if (areaTexto.getText().contains("+")) {
+                entradaSwitch = 1;
+            } else if (areaTexto.getText().contains("-")) {
+                entradaSwitch = 2;
+            } else if (areaTexto.getText().contains("*")) {
+                entradaSwitch = 3;
+            } else if (areaTexto.getText().contains("/")) {
+                entradaSwitch = 4;
+            }
+            //estructura switch para realizar operaciones segun la operacion
+            switch (entradaSwitch) {
+                case 1:
+                    bo.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent arg0) {
+                            var1 = areaTexto.getText().replace("+", "s");
+                            array = var1.split("s");
+                            for (int i = 0; i < array.length; i++) {
+                                resultado += Double.parseDouble(array[i]);
+                            }
+                            areaTexto.setText(Double.toString(resultado));
+                        }
+                    });
+                    break;
+                case 2:
+                    bo.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent arg0) {
+                            var1 = areaTexto.getText().replace("-", "r");
+                            array = var1.split("r");
+                            for (int i = 0; i < array.length; i++) {
+                                resultado = Double.parseDouble(array[0]);
+                                resultado -= Double.parseDouble(array[i]);
+                            }
+                            areaTexto.setText(Double.toString(resultado));
+                        }
+                    });
+                    break;
+                case 3:
+                    bo.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent arg0) {
+                            var1 = areaTexto.getText().replace("*", "m");
+                            array = var1.split("m");
+                            resultado = 1;
+                            for (int i = 0; i < array.length; i++) {
+                                resultado *= Double.parseDouble(array[i]);
+                            }
+                            areaTexto.setText(Double.toString(resultado));
+                        }
+                    });
+                    break;
+                case 4:
+                    bo.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent arg0) {
+                            var1 = areaTexto.getText().replace("/", "d");
+                            array = var1.split("d");
+                            for (int i = 0; i < array.length; i++) {
+                                resultado = Double.parseDouble(array[0]);
+                                resultado /= Double.parseDouble(array[i]);
+//                                    resultado /= Double.parseDouble(array[i]);
+                            }
+                            areaTexto.setText(Double.toString(resultado));
+
+                        }
+                    });
+                    break;
+            }
+            //al pulsar el boton C se resetea todo
+        } else if (bo.getText().equals("C")) {
+            var1 = "";
+            areaTexto.setText("");
+            resultado = 0;
+            for (int i = 0; i < array.length; i++) {
+                array[i] = "";
+            }
+            for (int i = 10; i <= 13; i++) {
+                botonera.grupoBotones[i].setEnabled(true);
+            }
+        }
+
+    }
 }
